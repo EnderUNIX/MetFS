@@ -1,0 +1,42 @@
+AC_INIT(fuse, 2.7.2)
+AC_CONFIG_HEADERS(config.h)
+AC_PROG_CC
+AC_LANG_C
+AM_PROG_CC_C_O
+AC_PROG_INSTALL
+
+# compatibility for automake < 1.8
+if test -z "$mkdir_p"; then
+	mkdir_p="../mkinstalldirs"
+	AC_SUBST(mkdir_p)
+fi
+
+case $target_os in
+     *linux*)	arch=linux;;
+     *bsd*)	arch=bsd;;
+     *)		arch=unknown;;
+esac
+
+CFLAGS="-D_FILE_OFFSET_BITS=64 -O3 -D_REENTRANT -ansi -Wall -g -fno-strict-aliasing -I/usr/local/include -I/usr/include"
+CPPFLAGS="-I/usr/local/include -I/usr/include"
+DEFS="-D_FILE_OFFSET_BITS=64 -D_REENTRANT"
+LDFLAGS="-L/usr/local/lib -L/usr/lib"
+LIBS="-pthread -lrt -lfuse -lulockmgr -lgcrypt /usr/local/lib/libtar.a"
+libexecdir="metfs.o mstring.o readpassphrase.o"
+
+AC_CHECK_FUNCS([fork setxattr fdatasync])
+AC_CHECK_MEMBERS([struct stat.st_atim])
+AC_CHECK_MEMBERS([struct stat.st_atimespec])
+
+AC_SEARCH_LIBS(dlopen, [dl])
+AC_SEARCH_LIBS(clock_gettime, [rt])
+AC_SEARCH_LIBS([pthread])
+AC_SEARCH_LIBS([fuse])
+AC_SEARCH_LIBS([ulockmgr])
+AC_SEARCH_LIBS([gcrypt])
+
+AM_CONDITIONAL(LINUX, test "$arch" = linux)
+AM_CONDITIONAL(BSD, test "$arch" = bsd)
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

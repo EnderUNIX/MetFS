@@ -1,0 +1,7 @@
+$Id: TODO,v 1.6 2008/04/16 04:27:44 mk Exp $
+
+- Make METFS stable on FreeBSD.
+- Make all options available as a command parameter.
+- Don't extract/create all files included .mfs file.
+  Append and extract only the needed file.
+- Implement an interface in JAVA.

@@ -1,0 +1,87 @@
+$Id: README,v 1.13 2008/04/16 04:26:12 mk Exp $
+
+MetFS is a filesystem software in userspace that is FUSE based, encrypted, dynamic sized (increase when new data added, decrease when data removed), single file when it's unmounted and very fast. In order to install MetFS, please refer to INSTALL. For licensing information see COPYING.
+
+MetFS 's been written in C language for performance reasons; proved to be running on Linux and FreeBSD.
+
+Features
+
+    * MetFS partitions are visible only to the user who mounted them. No other users (including root) can view the filesystem contents.
+    * MetFS partition looks like a single file when it's unmounted.
+    * Clear version of the user password is never written to disk.
+    * RC4 stream cipher is used.
+    * MD5 hash algorithm is preferred.
+    * Clear data never stored in anywhere.
+    * Writing 1.6 GB sized data in ext3 filesystem is just 16 seconds faster than MetFS.
+    * Faster and more secure string functions of OpenBSD and D.J.B are used.
+
+Read TODO list for our incoming features.
+
+.mfs is official file extension of MetFS.
+
+MetFS depends on FUSE, libgcrypt, and libtar. Thus, these packages must be installed in order to install MetFS.
+
+At first, install FUSE:
+  1st way: Issue 'yum -y install fuse-devel' or 'pkg_add -r fusefs-libs' in Red Hat or FreeBSD respectively.
+  2nd way: Download the source code of FUSE from http://sourceforge.net/project/showfiles.php?group_id=121684&package_id=132802. Then:
+           # tar -zxvf fuse-2.7.2.tar.gz
+           # cd fuse-2.7.2
+           # ./configure
+           # make && make install
+
+Secondly, install libgcrypt:
+  1st way: Issue 'yum -y install libgcrypt-devel' or 'pkg_add -r libgcrypt' in Red Hat or FreeBSD respectively.
+  2nd way:
+           # wget ftp://ftp.gnupg.org/gcrypt/libgcrypt/libgcrypt-1.4.0.tar.bz2
+           # tar -jxvf libgcrypt-1.4.0.tar.bz2
+           # cd  libgcrypt-1.4.0
+           # ./configure
+           # make && make install
+
+Finally, install libtar:
+           # wget ftp://ftp.feep.net/pub/software/libtar/libtar-1.2.11.tar.gz
+           # tar -zxvf libtar-1.2.11.tar.gz
+           # cd  libtar-1.2.11
+           # ./configure
+           # make && make install
+
+NOTE: On FreeBSD systems, also the 'libtool' package must be installed via 'pkg_add -r libtool' command.
+
+Now, MetFS can be installed smoothly:
+           # wget http://www.EnderUNIX.org/metfs/metfs-1.0.tar.gz   /* Please check for new versions. */
+           # tar -zxvf metfs-1.0.tar.gz
+           # cd metfs-1.0
+           # ./configure
+           # make && make install strip
+
+By default, all FUSE based filesystems are visible only to the user who mounted them.
+No other users (including root) can view the filesystem contents
+(although, root makes "su normal_user"; root cannot access the MetFS partition of a non-privileged user).
+In order to enable this feature, please add the group "fuse" to the non-privileged user's group in the "/etc/group" file.
+
+
+Sample Usage
+------------
+
+$ metfs ~metin/mount ~metin/enc
+Enter your metfs file name (if you don't have, just hit ENTER): /* For the first time, just hit ENTER.     */
+New    MetFS Password:                                          /* Type your password. It won't be echoed. */
+Verify MetFS Password:                                          /* Retype your password.                   */
+Enter the file name that will contain your encrypted data [max. 1024 characters]: ~metin/test.mfs
+$ cp ~metin/my_secret_file ~metin/mount    /* Copy your secret files to the MetFS partition.    */
+$ fusermount -u ~metin/mount/              /* Then unmount your MetFS partition via fusermount. */
+$ file ~metin/test.mfs
+/home/metin/test.mfs: data
+$ metfs ~metin/mount ~metin/enc
+Enter your metfs file name (if you don't have, just hit ENTER): /home/metin/test.mfs  /* give full path of the file */
+Enter MetFS Password:
+Password OK...
+$ ls ~metin/mount       /* See your files. */
+my_secret_file
+$ fusermount -u ~metin/mount/
+
+
+Please feel free to ask questions about MetFS to the author Metin KAYA <metin@EnderUNIX.org>.
+
+EnderUNIX Software Development Team @ Istanbul/TURKIYE
+http://www.EnderUNIX.org

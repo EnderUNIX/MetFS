@@ -1,0 +1,35 @@
+#
+# Metin KAYA <metin@EnderUNIX.org>
+#
+# April 2008, Istanbul/TURKIYE
+# http://www.enderunix.org/metfs/
+#
+# $Id: Makefile.in,v 1.1 2008/04/11 10:57:48 mk Exp $
+#
+
+CC       = @CC@
+DEFS     = @DEFS@
+CFLAGS   = @CFLAGS@
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS  = @LDFLAGS@
+LIBS     = @LIBS@
+OBJS     = @libexecdir@ 
+STRIP    = strip
+
+all:    
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(DEFS) -c -o metfs.o metfs.c
+	$(CC) -Wall -W -g -c -o readpassphrase.o readpassphrase.c
+	$(CC) -Wall -W -g -c -o mstring.o mstring.c
+	libtool --tag=CC --mode=link $(CC) $(CPPFLAGS) $(DEFS) $(LDFLAGS) $(LIBS) $(OBJS) -o metfs
+
+strip:
+	$(STRIP) metfs 
+
+install:
+	cp -f metfs /usr/local/bin/metfs
+
+uninstall:
+	rm -f /usr/local/bin/metfs
+
+clean:
+	rm -rf .libs metfs *.o core.* *~
